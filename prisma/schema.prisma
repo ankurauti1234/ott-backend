@@ -37,6 +37,8 @@ model Event {
   ads        EventAd[]
   channels   EventChannel[]
   content    EventContent[]
+  faces      EventFace[]
+  ocr        EventOCR[]
   labels     LabelEvent[]
 
   @@index([device_id])
@@ -76,14 +78,35 @@ model EventContent {
   @@index([name])
 }
 
+model EventFace {
+  id       Int    @id @default(autoincrement())
+  event_id BigInt
+  name     String
+  score    Float?
+  event    Event  @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@index([event_id])
+  @@index([name])
+}
+
+model EventOCR {
+  id       Int    @id @default(autoincrement())
+  event_id BigInt
+  text     String
+  event    Event  @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@index([event_id])
+  @@index([text])
+}
+
 model Label {
   id         Int           @id @default(autoincrement())
   label_type String
   created_by String
   created_at DateTime      @default(now())
-  start_time BigInt
-  end_time   BigInt
   notes      String?
+  end_time   BigInt
+  start_time BigInt
   ad         LabelAd?
   error      LabelError?
   events     LabelEvent[]
@@ -159,4 +182,11 @@ enum AdType {
   COMMERCIAL_BREAK
   SPOT_OUTSIDE_BREAK
   AUTO_PROMO
+}
+
+enum PromoType {
+  TRAILER
+  ANNOUNCEMENT
+  TEASER
+  PROMO_SPOT
 }
