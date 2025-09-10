@@ -22,7 +22,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map(o => o.trim()),
   credentials: true
 }));
 app.use(morgan('combined'));
